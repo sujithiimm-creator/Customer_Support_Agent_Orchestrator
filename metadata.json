@@ -1,0 +1,6 @@
+{
+  "name": "NordHaven Agentic AI Platform",
+  "description": "AI-Augmented Customer Operations Platform for NordHaven Financial Services featuring autonomous multi-agent orchestration, RAG policy retrieval, human-in-the-loop controls, and CFPB compliance audit logging.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
