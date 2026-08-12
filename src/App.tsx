@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { MotionConfig, AnimatePresence, motion } from 'motion/react';
 import { Building2, MapPin, Phone, Mail } from 'lucide-react';
 import { Header } from './components/Header';
 import { NavigationTabs, TabKey } from './components/NavigationTabs';
@@ -207,79 +208,91 @@ export default function App() {
   const pendingHitlCount = messages.filter((m) => m.sender === 'agent' && m.agentPayload && !m.hitlDecision).length;
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-purple-600 selection:text-white flex flex-col">
-      {/* Top Header */}
-      <Header
-        selectedCustomer={selectedCustomer}
-        customers={MOCK_CUSTOMERS}
-        onSelectCustomer={handleSelectCustomer}
-      />
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-screen text-white font-sans flex flex-col" style={{ background: 'var(--nh-canvas)' }}>
+        {/* Top Header */}
+        <Header
+          selectedCustomer={selectedCustomer}
+          customers={MOCK_CUSTOMERS}
+          onSelectCustomer={handleSelectCustomer}
+        />
 
-      {/* Navigation Tabs */}
-      <NavigationTabs
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        pendingHitlCount={pendingHitlCount}
-      />
+        {/* Navigation Tabs */}
+        <NavigationTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          pendingHitlCount={pendingHitlCount}
+        />
 
-      {/* Main Content Body */}
-      <main className="flex-1 bg-black">
-        {activeTab === 'demo' && (
-          <LiveDemoWorkspace
-            selectedCustomer={selectedCustomer}
-            onSelectCustomer={handleSelectCustomer}
-            messages={messages}
-            onSendMessage={handleSendMessage}
-            isLoading={isLoading}
-            loadingStep={loadingStep}
-            latestPayload={latestPayload}
-            onHitlDecision={handleHitlDecision}
-            onResetDemo={handleResetDemo}
-          />
-        )}
+        {/* Main Content Body */}
+        <main className="flex-1">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
+            >
+              {activeTab === 'demo' && (
+                <LiveDemoWorkspace
+                  selectedCustomer={selectedCustomer}
+                  onSelectCustomer={handleSelectCustomer}
+                  messages={messages}
+                  onSendMessage={handleSendMessage}
+                  isLoading={isLoading}
+                  loadingStep={loadingStep}
+                  latestPayload={latestPayload}
+                  onHitlDecision={handleHitlDecision}
+                  onResetDemo={handleResetDemo}
+                />
+              )}
 
-        {activeTab === 'rfc' && <PolicyRepositoryView />}
+              {activeTab === 'rfc' && <PolicyRepositoryView />}
 
-        {activeTab === 'customers' && (
-          <CustomerProfilesView onSelectAndLaunchDemo={handleSelectAndLaunchDemo} />
-        )}
+              {activeTab === 'customers' && (
+                <CustomerProfilesView onSelectAndLaunchDemo={handleSelectAndLaunchDemo} />
+              )}
 
-        {activeTab === 'agents' && <AgentRepositoryView />}
-      </main>
+              {activeTab === 'agents' && <AgentRepositoryView />}
+            </motion.div>
+          </AnimatePresence>
+        </main>
 
-      {/* Persistent Footer */}
-      <footer className="bg-[#080808] border-t border-neutral-800 py-6 text-xs text-neutral-300">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          
-          {/* Company & Headquarters Info */}
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Building2 className="w-4 h-4 text-[#A100FF] shrink-0" />
-              <strong className="text-white font-bold text-sm">NordHaven Financial Services</strong>
-              <span className="text-neutral-400 font-normal hidden sm:inline">• Accenture Agentic AI Operations</span>
+        {/* Persistent Footer */}
+        <footer className="nh-material-1 border-x-0 border-b-0 py-6 text-xs" style={{ color: 'var(--nh-label-secondary)' }}>
+          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+
+            {/* Company & Headquarters Info */}
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Building2 className="w-4 h-4 shrink-0" style={{ color: 'var(--nh-accent)' }} />
+                <strong className="text-white font-bold text-sm">NordHaven Financial Services</strong>
+                <span className="font-normal hidden sm:inline" style={{ color: 'var(--nh-label-tertiary)' }}>• Agentic AI Operations</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-xs mt-1">
+                <MapPin className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--nh-accent)' }} />
+                <span><strong className="text-white">Headquarters:</strong> Charlotte, North Carolina, USA</span>
+              </div>
             </div>
-            
-            <div className="flex items-center gap-1.5 text-neutral-300 text-xs mt-1">
-              <MapPin className="w-3.5 h-3.5 text-[#A100FF] shrink-0" />
-              <span><strong className="text-white">Headquarters:</strong> Charlotte, North Carolina, USA</span>
+
+            {/* Contact Us Details */}
+            <div className="nh-material-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-5 p-3 rounded-xl w-full md:w-auto text-white">
+              <span className="font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--nh-accent-soft)' }}>Contact Us</span>
+              <div className="flex items-center gap-1.5 text-xs">
+                <Phone className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--nh-accent)' }} />
+                <span><strong className="text-white">Phone Number:</strong> (704) 123-4567</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs">
+                <Mail className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--nh-accent)' }} />
+                <span><strong className="text-white">Email ID:</strong> custsupport.nordhaven@gmail.com</span>
+              </div>
             </div>
+
           </div>
-
-          {/* Contact Us Details */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-5 bg-[#141414] p-3 rounded-xl border border-neutral-800 w-full md:w-auto text-white">
-            <span className="font-bold text-[#D899FF] text-xs uppercase tracking-wider">Contact Us</span>
-            <div className="flex items-center gap-1.5 text-neutral-200 text-xs">
-              <Phone className="w-3.5 h-3.5 text-[#A100FF] shrink-0" />
-              <span><strong className="text-white">Phone Number:</strong> (704) 123-4567</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-neutral-200 text-xs">
-              <Mail className="w-3.5 h-3.5 text-[#A100FF] shrink-0" />
-              <span><strong className="text-white">Email ID:</strong> custsupport.nordhaven@gmail.com</span>
-            </div>
-          </div>
-
-        </div>
-      </footer>
-    </div>
+        </footer>
+      </div>
+    </MotionConfig>
   );
 }
